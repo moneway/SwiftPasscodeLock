@@ -58,11 +58,13 @@ open class PasscodeLock: PasscodeLockType {
         passcode.removeLast()
         delegate?.passcodeLock(self, removedSignAtIndex: passcode.count)
     }
-    
+	
     open func changeStateTo(_ state: PasscodeLockStateType) {
-        
-        lockState = state
-        delegate?.passcodeLockDidChangeState(self)
+        DispatchQueue.main.async { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.lockState = state
+            strongSelf.delegate?.passcodeLockDidChangeState(strongSelf)
+        }
     }
     
     open func authenticateWithBiometrics() {
