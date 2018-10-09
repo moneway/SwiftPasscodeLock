@@ -34,6 +34,13 @@ open class PasscodeSignButton: UIButton {
             setupView()
         }
     }
+	
+    @IBInspectable
+    open var size: CGFloat = 60 {
+        didSet {
+            setupView()
+        }
+    }
     
     public override init(frame: CGRect) {
         
@@ -52,7 +59,7 @@ open class PasscodeSignButton: UIButton {
     
     open override var intrinsicContentSize : CGSize {
         
-        return CGSize(width: 60, height: 60)
+        return CGSize(width: size, height: size)
     }
     
     fileprivate var defaultBackgroundColor = UIColor.clear
