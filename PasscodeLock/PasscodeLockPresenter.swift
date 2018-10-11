@@ -9,14 +9,10 @@
 import UIKit
 
 open class PasscodeLockPresenter {
-    
-    fileprivate var mainWindow: UIWindow?
-    
     fileprivate lazy var passcodeLockWindow: UIWindow = {
-        
         let window = UIWindow(frame: UIScreen.main.bounds)
         
-        window.windowLevel = 0
+        window.windowLevel = -1
         window.makeKeyAndVisible()
         
         return window
@@ -27,19 +23,16 @@ open class PasscodeLockPresenter {
     
     open let passcodeLockVC: PasscodeLockViewController
     
-    public init(mainWindow window: UIWindow?, configuration: PasscodeLockConfigurationType, viewController: PasscodeLockViewController) {
-        
-        mainWindow = window
-        mainWindow?.windowLevel = 1
+    public init(configuration: PasscodeLockConfigurationType, viewController: PasscodeLockViewController) {
         passcodeConfiguration = configuration
         
         passcodeLockVC = viewController
     }
 
-    public convenience init(mainWindow window: UIWindow?, configuration: PasscodeLockConfigurationType) {
+    public convenience init(configuration: PasscodeLockConfigurationType) {
         let passcodeLockVC = PasscodeLockViewController(state: .enterPasscode, configuration: configuration)
         
-        self.init(mainWindow: window, configuration: configuration, viewController: passcodeLockVC)
+        self.init(configuration: configuration, viewController: passcodeLockVC)
     }
     
     // HACK: below function that handles not presenting the keyboard in case Passcode is presented
@@ -64,7 +57,7 @@ open class PasscodeLockPresenter {
         guard !isPasscodePresented else { return }
         
         isPasscodePresented = true
-        passcodeLockWindow.windowLevel = 2
+        passcodeLockWindow.windowLevel = 1
         
         toggleKeyboardVisibility(hide: true)
         
@@ -83,8 +76,6 @@ open class PasscodeLockPresenter {
     open func dismissPasscodeLock(animated: Bool = true) {
         
         isPasscodePresented = false
-        mainWindow?.windowLevel = 1
-        mainWindow?.makeKeyAndVisible()
         
         if animated {
             UIView.animate(
@@ -99,14 +90,14 @@ open class PasscodeLockPresenter {
                 },
                 completion: { [weak self] _ in
                     
-                    self?.passcodeLockWindow.windowLevel = 0
+                    self?.passcodeLockWindow.windowLevel = -1
                     self?.passcodeLockWindow.rootViewController = nil
                     self?.passcodeLockWindow.alpha = 1
                     self?.toggleKeyboardVisibility(hide: false)
                 }
             )
         } else {
-            passcodeLockWindow.windowLevel = 0
+            passcodeLockWindow.windowLevel = -1
             passcodeLockWindow.rootViewController = nil
             toggleKeyboardVisibility(hide: false)
         }

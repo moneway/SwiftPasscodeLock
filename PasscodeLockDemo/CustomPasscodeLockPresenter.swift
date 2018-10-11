@@ -17,7 +17,7 @@ class CustomPasscodeLockPresenter: PasscodeLockPresenter {
     
     var isFreshAppLaunch = true
     
-    init(mainWindow window: UIWindow?, configuration: PasscodeLockConfigurationType) {
+    init(configuration: PasscodeLockConfigurationType) {
         
         notificationCenter = NotificationCenter.default
         
@@ -26,7 +26,7 @@ class CustomPasscodeLockPresenter: PasscodeLockPresenter {
         // TIP: you can set your custom viewController that has added functionality in a custom .xib too
         let passcodeLockVC = PasscodeLockViewController(state: .enterPasscode, configuration: configuration)
         
-        super.init(mainWindow: window, configuration: configuration, viewController: passcodeLockVC)
+        super.init(configuration: configuration, viewController: passcodeLockVC)
         
         // add notifications observers
         notificationCenter.addObserver(
