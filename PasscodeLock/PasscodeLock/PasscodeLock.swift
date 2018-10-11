@@ -22,8 +22,8 @@ open class PasscodeLock: PasscodeLockType {
         return lockState
     }
     
-    open var isTouchIDAllowed: Bool {
-        return isTouchIDEnabled() && configuration.isTouchIDAllowed && lockState.isTouchIDAllowed
+    open var isBiometricAuthAllowed: Bool {
+        return isBiometricAuthEnabled() && configuration.isBiometricAuthAllowed && lockState.isBiometricAuthAllowed
     }
     
     fileprivate var lockState: PasscodeLockStateType
@@ -58,7 +58,7 @@ open class PasscodeLock: PasscodeLockType {
         passcode.removeLast()
         delegate?.passcodeLock(self, removedSignAtIndex: passcode.count)
     }
-	
+    
     open func changeStateTo(_ state: PasscodeLockStateType) {
         DispatchQueue.main.async { [weak self] in
             guard let strongSelf = self else { return }
@@ -69,26 +69,37 @@ open class PasscodeLock: PasscodeLockType {
     
     open func authenticateWithBiometrics() {
         
-        guard isTouchIDAllowed else { return }
+        guard isBiometricAuthAllowed else { return }
         
         let context = LAContext()
         let reason: String
-        if let configReason = configuration.touchIdReason {
+        if let configReason = configuration.biometricAuthReason {
             reason = configReason
         } else {
-            reason = localizedStringFor("PasscodeLockTouchIDReason", comment: "TouchID authentication reason")
+            if #available(iOS 11, *) {
+                switch(context.biometryType) {
+                case .touchID:
+                    reason = localizedStringFor("PasscodeLockTouchIDReason", comment: "Authentication required to proceed")
+                case .faceID:
+                    reason = localizedStringFor("PasscodeLockFaceIDReason", comment: "Authentication required to proceed")
+                default:
+                    reason = localizedStringFor("PasscodeLockBiometricAuthReason", comment: "Authentication required to proceed")
+                }
+            } else {
+                reason = localizedStringFor("PasscodeLockBiometricAuthReason", comment: "Authentication required to proceed")
+            }
         }
 
-        context.localizedFallbackTitle = localizedStringFor("PasscodeLockTouchIDButton", comment: "TouchID authentication fallback button")
+        context.localizedFallbackTitle = localizedStringFor("PasscodeLockBiometricAuthButton", comment: "Biometric authentication fallback button")
         
         context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) {
             success, error in
             
-            self.handleTouchIDResult(success)
+            self.handleBiometricAuthResult(success)
         }
     }
     
-    fileprivate func handleTouchIDResult(_ success: Bool) {
+    fileprivate func handleBiometricAuthResult(_ success: Bool) {
         
         DispatchQueue.main.async {
             
@@ -99,7 +110,7 @@ open class PasscodeLock: PasscodeLockType {
         }
     }
     
-    fileprivate func isTouchIDEnabled() -> Bool {
+    fileprivate func isBiometricAuthEnabled() -> Bool {
         
         let context = LAContext()
         
