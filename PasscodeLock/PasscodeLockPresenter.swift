@@ -12,7 +12,7 @@ open class PasscodeLockPresenter {
     fileprivate lazy var passcodeLockWindow: UIWindow = {
         let window = UIWindow(frame: UIScreen.main.bounds)
         
-        window.windowLevel = -1
+        window.windowLevel = UIWindow.Level(rawValue: -1)
         window.makeKeyAndVisible()
         
         return window
@@ -57,7 +57,7 @@ open class PasscodeLockPresenter {
         guard !isPasscodePresented else { return }
         
         isPasscodePresented = true
-        passcodeLockWindow.windowLevel = 1
+        passcodeLockWindow.windowLevel = UIWindow.Level(rawValue: 1)
         
         toggleKeyboardVisibility(hide: true)
         
@@ -90,14 +90,14 @@ open class PasscodeLockPresenter {
                 },
                 completion: { [weak self] _ in
                     
-                    self?.passcodeLockWindow.windowLevel = -1
+                    self?.passcodeLockWindow.windowLevel = UIWindow.Level(rawValue: -1)
                     self?.passcodeLockWindow.rootViewController = nil
                     self?.passcodeLockWindow.alpha = 1
                     self?.toggleKeyboardVisibility(hide: false)
                 }
             )
         } else {
-            passcodeLockWindow.windowLevel = -1
+            passcodeLockWindow.windowLevel = UIWindow.Level(rawValue: -1)
             passcodeLockWindow.rootViewController = nil
             toggleKeyboardVisibility(hide: false)
         }
