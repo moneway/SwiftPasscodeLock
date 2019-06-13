@@ -12,13 +12,14 @@ struct ConfirmPasscodeState: PasscodeLockStateType {
     
     let title: String
     let description: String
-    let isCancellableAction = true
+    let isCancellableAction: Bool
     var isBiometricAuthAllowed: Bool = false
     
     fileprivate var passcodeToConfirm: [String]
     
-    init(passcode: [String]) {
-        
+	init(passcode: [String], allowCancellation: Bool = true) {
+		
+        isCancellableAction = allowCancellation
         passcodeToConfirm = passcode
         title = localizedStringFor("PasscodeLockConfirmTitle", comment: "Confirm passcode title")
         description = localizedStringFor("PasscodeLockConfirmDescription", comment: "Confirm passcode description")
@@ -36,7 +37,7 @@ struct ConfirmPasscodeState: PasscodeLockStateType {
             let mismatchTitle = localizedStringFor("PasscodeLockMismatchTitle", comment: "Passcode mismatch title")
             let mismatchDescription = localizedStringFor("PasscodeLockMismatchDescription", comment: "Passcode mismatch description")
             
-            let nextState = SetPasscodeState(title: mismatchTitle, description: mismatchDescription)
+            let nextState = SetPasscodeState(title: mismatchTitle, description: mismatchDescription, allowCancellation: isCancellableAction)
             
             lock.changeStateTo(nextState)
             lock.delegate?.passcodeLockDidFail(lock)

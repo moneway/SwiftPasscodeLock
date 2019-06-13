@@ -12,24 +12,26 @@ struct SetPasscodeState: PasscodeLockStateType {
     
     let title: String
     let description: String
-    let isCancellableAction = true
+    let isCancellableAction: Bool
     var isBiometricAuthAllowed: Bool = false
     
-    init(title: String, description: String) {
+	init(title: String, description: String, allowCancellation: Bool = true) {
         
         self.title = title
         self.description = description
+        self.isCancellableAction = allowCancellation
     }
     
-    init() {
-        
+    init(allowCancellation: Bool = true) {
+		
         title = localizedStringFor("PasscodeLockSetTitle", comment: "Set passcode title")
         description = localizedStringFor("PasscodeLockSetDescription", comment: "Set passcode description")
+        isCancellableAction = allowCancellation
     }
     
     func acceptPasscode(_ passcode: [String], fromLock lock: PasscodeLockType) {
         
-        let nextState = ConfirmPasscodeState(passcode: passcode)
+        let nextState = ConfirmPasscodeState(passcode: passcode, allowCancellation: isCancellableAction)
         
         lock.changeStateTo(nextState)
     }
