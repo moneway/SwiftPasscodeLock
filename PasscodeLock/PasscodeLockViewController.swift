@@ -136,14 +136,6 @@ open class PasscodeLockViewController: UIViewController, PasscodeLockTypeDelegat
         shouldTryToAuthenticateWithBiometrics = false
     }
     
-    open func isBiometricAuthAllowed() -> Bool {
-        return self.passcodeLock.isBiometricAuthAllowed
-    }
-    
-    open func isCancellableAction() -> Bool {
-        self.passcodeLock.state.isCancellableAction
-    }
-    
     // MARK: - Actions
     
     @IBAction func passcodeSignButtonTap(_ sender: PasscodeSignButton) {
